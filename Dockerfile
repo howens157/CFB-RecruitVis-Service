@@ -1,22 +1,17 @@
-# For more information, please refer to https://aka.ms/vscode-docker-python
-FROM python:3-slim
-
-# Warning: A port below 1024 has been exposed. This requires the image to run as a root user which is not a best practice.
-# For more information, please refer to https://aka.ms/vscode-docker-python-user-rights`
-EXPOSE 8080
-
+FROM python:3.11.3
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
 
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
-# Install pip requirements
+RUN pip install --upgrade pip
 COPY requirements.txt .
-RUN python -m pip install -r requirements.txt
+RUN pip install --no-cache-dir -r  requirements.txt
 
-WORKDIR /app
-COPY . /app
+ENV APP_HOME /root
+WORKDIR $APP_HOME
+COPY /app $APP_HOME/app
 
-# During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "-k", "uvicorn.workers.UvicornWorker", "app.main:app"]
+EXPOSE 8080
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
