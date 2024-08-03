@@ -1,8 +1,21 @@
 from fastapi import FastAPI
 import cfbd
+from google.cloud import secretmanager
+import os
+
+def get_api_key():
+    envApiKey = os.environ.get("CFBD_API_KEY")
+    print(f'envApiKey {envApiKey}')
+    if envApiKey: return envApiKey
+    client = secretmanager.SecretManagerServiceClient()
+    secret_name = "projects/your-project-id/secrets/your-secret-name/versions/latest"
+    response = client.access_secret_version(name=secret_name)
+    return response.payload.data.decode('UTF-8')
 
 configuration = cfbd.Configuration()
-configuration.api_key['Authorization'] = '+x74G37Yy75USCWjzTnxnEnDeJiuU4P1RrIlY1flnOfa5l8h3ZfKM8oenHJt44TE'
+CFBD_api_key = get_api_key()
+print(CFBD_api_key)
+configuration.api_key['Authorization'] = CFBD_api_key
 configuration.api_key_prefix['Authorization'] = 'Bearer'
 api_config = cfbd.ApiClient(configuration)
 
