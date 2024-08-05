@@ -42,11 +42,6 @@ async def teams():
     response = [school.school for school in teams]
     return response
 
-class RecruitsFilter(BaseModel):
-    schoolName: str
-    yearStart: int
-    yearEnd: int
-
 @cache(namespace="cfbd_calls", expire=84600)
 async def recruitsByTeamByYear(schoolName, year):
     recruits_api = cfbd.RecruitingApi(api_config)
@@ -57,14 +52,36 @@ async def recruitsByTeamByYear(schoolName, year):
             result.append(recruit.state_province)
     return result
 
+@cache(namespace="cfbd_calls", expire=84600)
+async def getSchoolInfo(schoolName):
+    teams_api = cfbd.TeamsApi(api_config)
+    teams = teams_api.get_fbs_teams()
+    team = next(team for team in teams if team.school == schoolName)
+    result = {}
+    result['lat'] = team.location.latitude
+    result['lng'] = team.location.longitude
+    if len(team.logos) > 0:
+        result['logo'] = team.logos[0]
+    result['color'] = team.color
+    result['alt_color'] = team.alt_color
+    return result
+
+class RecruitsFilter(BaseModel):
+    schoolName: str
+    yearStart: int
+    yearEnd: int
+
 @app.get("/recruits")
 async def recruitsByTeam(recruitsFilter: RecruitsFilter):
+    schoolInfo = await getSchoolInfo(recruitsFilter.schoolName)
     stateCounts = collections.Counter()
     for year in range(recruitsFilter.yearStart, recruitsFilter.yearEnd + 1):
         currYearRecruits = await recruitsByTeamByYear(recruitsFilter.schoolName, year)
         for state in currYearRecruits:
             stateCounts[state] += 1
-    return [{"state_name": key, "count": stateCounts[key]} for key in stateCounts]
+    
+    schoolInfo['playerData'] = [{"state_name": key, "count": stateCounts[key]} for key in stateCounts]
+    return schoolInfo
 
 @app.get("/clearCache")
 async def clearCache():
