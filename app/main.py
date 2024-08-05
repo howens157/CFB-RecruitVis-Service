@@ -9,6 +9,8 @@ from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.decorator import cache
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
+from fastapi.middleware.cors import CORSMiddleware
+
 
 gcloudProjectId = 'weighty-psyche-431000-f6'
 gcloudSecretName = 'CFBD_api_key'
@@ -33,6 +35,18 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     yield
 
 app = FastAPI(lifespan=lifespan)
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/teams")
 @cache(namespace="cfbd_calls", expire=86400)
