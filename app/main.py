@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from google.cloud import secretmanager
-from pydantic import BaseModel
 import collections
 import cfbd
 import os
@@ -56,13 +55,21 @@ async def teams():
     response = [school.school for school in teams]
     return response
 
+allowedStates = set([
+    "AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "IA",
+    "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO",
+    "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK",
+    "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI",
+    "WV", "WY","DC",
+])
+
 @cache(namespace="cfbd_calls", expire=84600)
 async def recruitsByTeamByYear(schoolName, year):
     recruits_api = cfbd.RecruitingApi(api_config)
     recruitsResponse = recruits_api.get_recruiting_players(year=year, team=schoolName)
     result = []
     for recruit in recruitsResponse:
-        if recruit.country == "USA":
+        if recruit.state_province in allowedStates:
             result.append(recruit.state_province)
     return result
 
@@ -80,17 +87,12 @@ async def getSchoolInfo(schoolName):
     result['alt_color'] = team.alt_color
     return result
 
-class RecruitsFilter(BaseModel):
-    schoolName: str
-    yearStart: int
-    yearEnd: int
-
 @app.get("/recruits")
-async def recruitsByTeam(recruitsFilter: RecruitsFilter):
-    schoolInfo = await getSchoolInfo(recruitsFilter.schoolName)
+async def recruitsByTeam(schoolName: str, yearStart: int, yearEnd: int):
+    schoolInfo = await getSchoolInfo(schoolName)
     stateCounts = collections.Counter()
-    for year in range(recruitsFilter.yearStart, recruitsFilter.yearEnd + 1):
-        currYearRecruits = await recruitsByTeamByYear(recruitsFilter.schoolName, year)
+    for year in range(yearStart, yearEnd + 1):
+        currYearRecruits = await recruitsByTeamByYear(schoolName, year)
         for state in currYearRecruits:
             stateCounts[state] += 1
     
