@@ -37,6 +37,9 @@ app = FastAPI(lifespan=lifespan)
 
 origins = [
     "http://localhost:3000",
+    "https://cfb-recruitvis-ui-52q4kjb4da-uk.a.run.app",
+    "https://cfbrecruits.com",
+    "https://www.cfbrecruits.com"
 ]
 
 app.add_middleware(
