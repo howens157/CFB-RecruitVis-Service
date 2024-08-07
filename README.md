@@ -1,7 +1,78 @@
-# CFB-RecruitVis-Service
-Backend for CFB RecruitVis, a college football recruiting visualization project
+# CFB Recruit Vis Service
 
-# Steps to run
-create python virtual environment with python -m venv .venv
-activate python virtual environment with .venv\Scripts\activate
-install dependencies with python -m pip install -r requirements.txt
+Backend for CFB RecruitVis, a college football recruiting visualization project.
+
+## Features
+
+- Provides API endpoints to fetch and serve college football recruiting data for [CFB Recruit Vis UI](https://github.com/howens157/CFB-RecruitVis-UI).
+- Integrates with CollegeFootballData.com for college football recruit information.
+
+## Prerequisites
+
+- Python 3.x installed on your local machine.
+- An API key from CollegeFootballData.com.
+
+## Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/CFB-RecruitVis-Service.git
+cd CFB-RecruitVis-Service
+```
+
+### 2. Create a virtual environment
+
+```bash
+python -m venv .venv
+```
+
+### 3. Activate the virtual environment
+
+* On Windows:
+  ```bash
+  .venv\Scripts\activate
+  ```
+* On macOS and Linux:
+  ```bash
+  Source .venv/bin/activate
+  ```
+
+### 4. Install Dependencies
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+### 5. Configure Environment Variable
+
+You need to set the CFBD_API_KEY environment variable to your CollegeFootballData.com API key.
+
+* On Windows:
+  ```bash
+  $env:CFBD_API_KEY = your_api_key_here
+  ```
+* On macOS and Linux:
+  ```bash
+  export CFBD_API_KEY=your_api_key_here
+  ```
+
+### 6. Run Application
+
+```bash
+uvicorn app.main:app --reload
+```
+
+The server will start and you can access the API documentation at `http://127.0.0.1:8000/docs`.
+
+## Endpoints
+
+The available endpoints and their usage can be explored via the automatically generated API documentation provided by FastAPI. Navigate to `http://127.0.0.1:8000/docs` in your web browser to see the interactive documentation.
+
+## Improvements and Bug Fixes
+
+If you notice any bugs that slipped by me, or have any suggested improvements, please contact me through the contact methods in my profile!
+
+***
+
+Please enjoy!
