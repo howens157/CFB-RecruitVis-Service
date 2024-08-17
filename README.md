@@ -5,12 +5,11 @@ Backend for CFB RecruitVis, a college football recruiting visualization project.
 ## Features
 
 - Provides API endpoints to fetch and serve college football recruiting data for [CFB Recruit Vis UI](https://github.com/howens157/CFB-RecruitVis-UI).
-- Integrates with CollegeFootballData.com for college football recruit information.
 
 ## Prerequisites
 
 - Python 3.x installed on your local machine.
-- An API key from CollegeFootballData.com.
+- Password for PostgreSQL database (contact me if interested)
 
 ## Setup
 
@@ -46,15 +45,15 @@ python -m pip install -r requirements.txt
 
 ### 5. Configure Environment Variable
 
-You need to set the CFBD_API_KEY environment variable to your CollegeFootballData.com API key.
+You need to set the CFB_DB_URL environment variable to the PostgreSQL database url.
 
 * On Windows:
   ```bash
-  $env:CFBD_API_KEY = your_api_key_here
+  $env:CFBD_DB_URL = database_url
   ```
 * On macOS and Linux:
   ```bash
-  export CFBD_API_KEY=your_api_key_here
+  export CFBD_DB_URL = database_url
   ```
 
 ### 6. Run Application
