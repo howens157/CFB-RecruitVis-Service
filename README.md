@@ -49,11 +49,11 @@ You need to set the CFB_DB_URL environment variable to the PostgreSQL database u
 
 * On Windows:
   ```bash
-  $env:CFBD_DB_URL = database_url
+  $env:CFB_DB_URL = database_url
   ```
 * On macOS and Linux:
   ```bash
-  export CFBD_DB_URL = database_url
+  export CFB_DB_URL = database_url
   ```
 
 ### 6. Run Application
